@@ -13,6 +13,7 @@
 int posX;
 int posY;
 float angle;
+cuSurface* trollFace;
 
 void key(keyboardEventArgs* e)
 {
@@ -28,43 +29,26 @@ void mouseMove(mouseEventArgs* e)
 	posY = e->y;
 }
 
+class simpleRenderer : public cuEffect
+{
+public:
+	void apply(cuSurface* in, cuSurface* out)
+	{
+		out->fill(cuPixel(255, 0, 0, 64));
+		trollFace->rotateAlphaBlitTo(out, posX, posY, 0, 0, trollFace->width, trollFace->height, degToRad(angle += 0.3));
+	}
+};
+
 int main()
 {
-	cuSurface* trollFace;
 	cuSurface::loadFromFile(L"test.png", &trollFace);
-
-	//cuSurface* text;
-	//cuSurface::loadFromFile(L"test.png", &text);
-
 	renderWindow wnd(1024, 768, true, L"Test");
-	renderPipeline pipeline(wnd.width, wnd.height);
 
 	wnd.inputMgr->keyUp += createHandler(key);
 	wnd.inputMgr->mouseMove += createHandler(mouseMove);
 
-	double timeNs = 0;
-	int64_t counter = 0;
+	wnd.pipeLine->addEffect(new simpleRenderer());
 
-	for (; !wnd.disposed;)
-	{
-		auto start = std::chrono::high_resolution_clock::now();
-
-		pipeline.swChain->back->fill(cuPixel(255, 0, 0, 64));
-		trollFace->rotateAlphaBlitTo(pipeline.swChain->back, posX, posY, 0, 0, trollFace->width, trollFace->height, degToRad(angle += 0.3));
-		cudaDeviceSynchronize();
-
-		//auto s = pipeline.swChain->back->copyToBuffer(wnd.backBuffer->buffer);
-		//wnd.repaintWindow();
-		wnd.pollMessage();
-
-		auto end = std::chrono::high_resolution_clock::now();
-
-		timeNs += (end - start).count();
-		if (counter++ == 240)
-		{
-			std::cout << "FPS:" << 1000.0 / (timeNs / 1000000.0 / 240) << "\n";
-			counter = 0;
-			timeNs = 0;
-		}
-	}
+	bool isRunning = true;
+	wnd.runLoop(false, false, isRunning);
 }

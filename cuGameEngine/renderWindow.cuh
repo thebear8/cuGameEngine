@@ -4,11 +4,13 @@
 #include <stdint.h>
 #include <Windows.h>
 #include <functional>
+#include <chrono>
 
 #include "cuPixel.cuh"
 #include "cuSurface.cuh"
 #include "gdiSurface.cuh"
 #include "inputManager.cuh"
+#include "renderPipeline.cuh"
 
 class renderWindow
 {
@@ -29,6 +31,7 @@ public:
 
 	gdiSurface* backBuffer;
 	inputManager* inputMgr;
+	renderPipeline* pipeLine;
 
 	renderWindow(int width, int height, bool fullScreen, wchar_t const* name)
 	{
@@ -41,17 +44,19 @@ public:
 		createWindow();
 		backBuffer = new gdiSurface(this->width, this->height);
 		inputMgr = new inputManager();
+		pipeLine = new renderPipeline(this->width, this->height);
 	}
 
 	~renderWindow()
 	{
 		delete backBuffer;
 		delete inputMgr;
+		delete pipeLine;
 	}
 
 	void pollMessage()
 	{
-		if (PeekMessageW(&currentMsg, hwnd, 0, 0, true))
+		while (PeekMessageW(&currentMsg, hwnd, 0, 0, true))
 		{
 			TranslateMessage(&currentMsg);
 			DispatchMessageW(&currentMsg);
@@ -66,6 +71,44 @@ public:
 		BeginPaint(hwnd, &ps);
 		BitBlt(ps.hdc, 0, 0, width, height, backBuffer->hdc, 0, 0, SRCCOPY);
 		EndPaint(hwnd, &ps);
+	}
+
+	void runLoop(bool useVSync, bool logFrameTimes, bool& isRunning)
+	{
+		for (; isRunning && !this->disposed; )
+		{
+			auto before = std::chrono::high_resolution_clock::now();
+
+			pollMessage();
+
+			auto afterMsg = std::chrono::high_resolution_clock::now();
+
+			pipeLine->render();
+			cudaDeviceSynchronize();
+
+			auto afterRender = std::chrono::high_resolution_clock::now();
+
+			pipeLine->swChain->back->copyToBuffer(backBuffer->buffer);
+			repaintWindow();
+
+			auto afterPresent = std::chrono::high_resolution_clock::now();
+
+			if (useVSync)
+			{
+				DwmFlush();
+			}
+
+			auto afterVSync = std::chrono::high_resolution_clock::now();
+
+			if (logFrameTimes)
+			{
+				auto msgTime = (afterMsg - before).count() / 1000.0;
+				auto renderTime = (afterRender - afterMsg).count() / 1000.0;
+				auto presentTime = (afterPresent - afterRender).count() / 1000.0;
+				auto vSyncTime = (afterVSync - afterPresent).count() / 1000.0;
+				std::cout << "Render Time: " << renderTime << "us, Present Time: " << presentTime << "us, Message Loop Time: " << msgTime << "us, VSync Time: " << vSyncTime << "us.\n";
+			}
+		}
 	}
 
 private:
