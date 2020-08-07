@@ -5,6 +5,8 @@
 #include <Windows.h>
 #include <functional>
 #include <chrono>
+#include <dwmapi.h>
+#pragma comment(lib, "dwmapi.lib")
 
 #include "cuPixel.cuh"
 #include "cuSurface.cuh"

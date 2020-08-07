@@ -1,37 +1,50 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <iostream>
-#include <chrono>
-#include <dwmapi.h>
-#pragma comment(lib, "dwmapi.lib")
 
 #include "gdiPlusInit.cuh"
 #include "renderWindow.cuh"
-#include "renderPipeline.cuh"
 #include "cuSurface.cuh"
 
-int posX;
-int posY;
-float angle;
-cuSurface* trollFace;
-
-void key(keyboardEventArgs* e)
+class renderTest : public cuEffect
 {
-	if (e->key == VK_ESCAPE)
-	{
-		ExitProcess(0);
-	}
-}
+private:
+	renderWindow wnd;
+	cuSurface* trollFace;
 
-void mouseMove(mouseEventArgs* e)
-{
-	posX = e->x;
-	posY = e->y;
-}
+	int posX;
+	int posY;
+	float angle;
 
-class simpleRenderer : public cuEffect
-{
 public:
+	renderTest() : wnd(1024, 768, true, L"Render Test")
+	{
+		cuSurface::loadFromFile(L"test.png", &trollFace);
+		wnd.pipeLine->addEffect(this);
+		wnd.inputMgr->key += createBoundHandler(&renderTest::onKey, this);
+		wnd.inputMgr->mouseMove += createBoundHandler(&renderTest::onMouse, this);
+	}
+
+	void run()
+	{
+		bool isRunning = true;
+		wnd.runLoop(true, false, isRunning);
+	}
+
+	void onKey(keyboardEventArgs* e)
+	{
+		if (e->key == VK_ESCAPE)
+		{
+			ExitProcess(0);
+		}
+	}
+
+	void onMouse(mouseEventArgs* e)
+	{
+		posX = e->x;
+		posY = e->y;
+	}
+
 	void apply(cuSurface* in, cuSurface* out)
 	{
 		out->fill(cuPixel(255, 0, 0, 64));
@@ -41,14 +54,6 @@ public:
 
 int main()
 {
-	cuSurface::loadFromFile(L"test.png", &trollFace);
-	renderWindow wnd(1024, 768, true, L"Test");
-
-	wnd.inputMgr->keyUp += createHandler(key);
-	wnd.inputMgr->mouseMove += createHandler(mouseMove);
-
-	wnd.pipeLine->addEffect(new simpleRenderer());
-
-	bool isRunning = true;
-	wnd.runLoop(false, false, isRunning);
+	auto render = new renderTest();
+	render->run();
 }
