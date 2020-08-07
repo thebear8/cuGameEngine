@@ -3,7 +3,7 @@ This is a very small toy game engine I created to play around with cuda and comp
 
 It's not at all complete, but has a few nice features. It's somewhat similar to OpenGL, but all functionality is implemented from scratch in cuda.
 
-Right now, there's only very basic 2d functionality like surfaces, blitting, alpha-blending, loading images into textures and so on.
+Right now, there's only very basic 2d functionality like surfaces, blitting, alpha-blending, loading images into surfaces and so on.
 It does have a very basic render pipeline and support for shaders, which are written in cuda aswell.
 
 One of the goals of this project was to have a lot of control over rendering, so the render pipeline is designed to be extremly basic and customizable.
