@@ -28,7 +28,7 @@ public:
 	void run()
 	{
 		bool isRunning = true;
-		wnd.runLoop(true, false, isRunning);
+		wnd.runLoop(false, true, isRunning);
 	}
 
 	void onKey(keyboardEventArgs* e)

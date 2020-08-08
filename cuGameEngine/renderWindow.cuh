@@ -108,7 +108,8 @@ public:
 				auto renderTime = (afterRender - afterMsg).count() / 1000.0;
 				auto presentTime = (afterPresent - afterRender).count() / 1000.0;
 				auto vSyncTime = (afterVSync - afterPresent).count() / 1000.0;
-				std::cout << "Render Time: " << renderTime << "us, Present Time: " << presentTime << "us, Message Loop Time: " << msgTime << "us, VSync Time: " << vSyncTime << "us.\n";
+				auto totalTime = (afterVSync - before).count() / 1000.0;
+				std::cout << "Render Time: " << renderTime << "us, Present Time: " << presentTime << "us, Message Loop Time: " << msgTime << "us, VSync Time: " << vSyncTime << "us. FPS: " << 1000000.0 / totalTime <<"\n";
 			}
 		}
 	}
@@ -179,6 +180,7 @@ private:
 		if (!wndClass)
 		{
 			WNDCLASSEXW wClass = { 0 };
+			wClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 			wClass.cbSize = sizeof(wClass);
 			wClass.lpszClassName = wndClassName;
 			wClass.lpfnWndProc = wndProc;
