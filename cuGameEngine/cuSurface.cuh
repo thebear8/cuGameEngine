@@ -9,27 +9,6 @@
 #include "cuPixel.cuh"
 #include "mathUtils.cuh"
 
-/*__global__ void cuSurfaceBlit(cuPixel* to, int64_t toWidth, int64_t toHeight, int64_t toXOff, int64_t toYOff, cuPixel* from, int64_t fromWidth, int64_t fromHeight, int64_t fromXOff, int64_t fromYOff, int64_t countX, int64_t countY)
-{
-	int x = blockDim.x * blockIdx.x + threadIdx.x;
-	int y = blockDim.y * blockIdx.y + threadIdx.y;
-
-	if (x >= 0 && x < countX && y >= 0 && y < countY)
-	{
-		int toX = toXOff + x;
-		int toY = toYOff + y;
-		if (toX >= 0 && toX < toWidth && toY >= 0 && toY < toHeight)
-		{
-			int fromX = fromXOff + x;
-			int fromY = fromYOff + y;
-			if (fromX >= 0 && fromX < fromWidth && fromY >= 0 && fromY < fromHeight)
-			{
-				to[toY * toWidth + toX] = from[fromY * fromWidth + fromX];
-			}
-		}
-	}
-}*/
-
 __global__ void cuSurfaceBlit(cuPixel* to, float toWidth, float toHeight, float toXOff, float toYOff, cuPixel* from, float fromWidth, float fromHeight, float fromXOff, float fromYOff, float countX, float countY)
 {
 	float x = blockDim.x * blockIdx.x + threadIdx.x;

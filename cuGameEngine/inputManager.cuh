@@ -13,9 +13,9 @@ class inputManager
 private:
 	keyboardEventArgs keyboardArgs{};
 	mouseEventArgs mouseArgs{};
-	POINT prevCursorPos = { 0 };
 
 public:
+	POINT prevCursorPos = { 0 };
 	keyboardEvent key, keyDown, keyUp;
 	mouseEvent mouse, mouseDown, mouseUp, mouseWheel, mouseMove;
 	bool captureMouse = false;
@@ -72,7 +72,7 @@ public:
 			break;
 
 		case WM_MOUSEWHEEL:
-			returnValue = handleMouseMove(wp, lp);
+			returnValue = handleMouseWheel(wp, lp);
 			break;
 
 		default:

@@ -17,9 +17,9 @@ private:
 	float angle;
 
 public:
-	renderTest() : wnd(1024, 768, true, L"Render Test")
+	renderTest() : wnd(1024, 768, false, L"Render Test")
 	{
-		cuSurface::loadFromFile(L"test.png", &trollFace);
+		cuSurface::loadFromFile(L"troll.png", &trollFace);
 		wnd.pipeLine->addEffect(this);
 		wnd.inputMgr->key += createBoundHandler(&renderTest::onKey, this);
 		wnd.inputMgr->mouseMove += createBoundHandler(&renderTest::onMouse, this);
@@ -28,7 +28,7 @@ public:
 	void run()
 	{
 		bool isRunning = true;
-		wnd.runLoop(false, true, isRunning);
+		wnd.runLoop(false, false, isRunning);
 	}
 
 	void onKey(keyboardEventArgs* e)

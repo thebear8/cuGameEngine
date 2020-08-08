@@ -3,6 +3,7 @@
 #include "device_launch_parameters.h"
 #include <stdint.h>
 #include <Windows.h>
+#include <iostream>
 #include <functional>
 #include <chrono>
 #include <dwmapi.h>

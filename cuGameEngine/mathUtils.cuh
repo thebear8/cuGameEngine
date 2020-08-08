@@ -5,22 +5,42 @@
 
 #include "cuPixel.cuh"
 
-__device__ __host__ __forceinline__ float map(float x, float in_min, float in_max, float out_min, float out_max)
+__device__ __host__ __forceinline__ float mapf(float x, float in_min, float in_max, float out_min, float out_max)
 {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-__device__ __host__ __forceinline__ float clamp(float x, float min, float max)
+__device__ __host__ __forceinline__ float clampf(float x, float min, float max)
 {
 	return x < min ? min : (x > max ? max : x);
 }
 
-__device__ __host__ __forceinline__ float degToRad(float deg)
+__device__ __host__ __forceinline__ float degToRadf(float deg)
 {
 	return deg * (3.1415926535f / 180.f);
 }
 
-__device__ __host__ __forceinline__ float radToDeg(float rad)
+__device__ __host__ __forceinline__ float radToDegf(float rad)
+{
+	return rad * (180.f / 3.1415926535f);
+}
+
+__device__ __host__ __forceinline__ double map(double x, double in_min, double in_max, double out_min, double out_max)
+{
+	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+__device__ __host__ __forceinline__ double clamp(double x, double min, double max)
+{
+	return x < min ? min : (x > max ? max : x);
+}
+
+__device__ __host__ __forceinline__ double degToRad(double deg)
+{
+	return deg * (3.1415926535f / 180.f);
+}
+
+__device__ __host__ __forceinline__ double radToDeg(double rad)
 {
 	return rad * (180.f / 3.1415926535f);
 }
