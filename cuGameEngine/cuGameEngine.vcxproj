@@ -84,7 +84,7 @@
       <Optimization>O2</Optimization>
       <CodeGeneration>compute_75,sm_75;%(CodeGeneration)</CodeGeneration>
       <InterleaveSourceInPTX>true</InterleaveSourceInPTX>
-      <Keep>true</Keep>
+      <Keep>false</Keep>
     </CudaCompile>
     <CudaLink>
       <Optimization>O2</Optimization>
