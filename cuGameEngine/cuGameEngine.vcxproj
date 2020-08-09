@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -58,6 +58,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_70,sm_70</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -99,6 +100,8 @@
     <ClInclude Include="cuSurface.cuh" />
     <ClInclude Include="cuVec.cuh" />
     <ClInclude Include="event.cuh" />
+    <ClInclude Include="fntParser.cuh" />
+    <ClInclude Include="fontGlyph.cuh" />
     <ClInclude Include="gdiPlusInit.cuh" />
     <ClInclude Include="gdiSurface.cuh" />
     <ClInclude Include="inputEvent.cuh" />
@@ -106,10 +109,15 @@
     <ClInclude Include="mathUtils.cuh" />
     <ClInclude Include="renderPipeline.cuh" />
     <ClInclude Include="renderWindow.cuh" />
+    <ClInclude Include="sdfTextRenderer.cuh" />
     <ClInclude Include="swapChain.cuh" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="lucidaconsole.png" />
     <Image Include="troll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lucidaconsole.fnt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

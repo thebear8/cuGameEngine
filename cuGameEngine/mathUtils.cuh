@@ -15,6 +15,11 @@ __device__ __host__ __forceinline__ float clampf(float x, float min, float max)
 	return x < min ? min : (x > max ? max : x);
 }
 
+__device__ __host__ __forceinline__ float smoothStepf(float x, float in_min, float in_max)
+{
+	return clampf((x - in_min) / (in_max - in_min), 0, 1);
+}
+
 __device__ __host__ __forceinline__ float degToRadf(float deg)
 {
 	return deg * (3.1415926535f / 180.f);
@@ -25,6 +30,18 @@ __device__ __host__ __forceinline__ float radToDegf(float rad)
 	return rad * (180.f / 3.1415926535f);
 }
 
+
+__device__ __host__ __forceinline__ float byteToFloat(unsigned char x)
+{
+	return x / 256.0f;
+}
+
+__device__ __host__ __forceinline__ unsigned char floatToByte(float x)
+{
+	return x * 256.0f;
+}
+
+
 __device__ __host__ __forceinline__ double map(double x, double in_min, double in_max, double out_min, double out_max)
 {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -33,6 +50,11 @@ __device__ __host__ __forceinline__ double map(double x, double in_min, double i
 __device__ __host__ __forceinline__ double clamp(double x, double min, double max)
 {
 	return x < min ? min : (x > max ? max : x);
+}
+
+__device__ __host__ __forceinline__ float smoothStep(double x, double in_min, double in_max)
+{
+	return clamp((x - in_min) / (in_max - in_min), 0, 1);
 }
 
 __device__ __host__ __forceinline__ double degToRad(double deg)
@@ -51,6 +73,33 @@ __device__ __host__ __forceinline__ cuPixel blendColor(cuPixel c1, cuPixel c2, f
 	float g = (c1.g * c1Alpha) + (c2.g * (1 - c1Alpha));
 	float b = (c1.b * c1Alpha) + (c2.b * (1 - c1Alpha));
 	return cuPixel(255, r, g, b);
+}
+
+__device__ __host__ __forceinline__ cuPixel blendPixel(cuPixel c1, cuPixel c2, float c1Alpha)
+{
+	float a = (c1.a * c1Alpha) + (c2.a * (1 - c1Alpha));
+	float r = (c1.r * c1Alpha) + (c2.r * (1 - c1Alpha));
+	float g = (c1.g * c1Alpha) + (c2.g * (1 - c1Alpha));
+	float b = (c1.b * c1Alpha) + (c2.b * (1 - c1Alpha));
+	return cuPixel(a, r, g, b);
+}
+
+__device__ __host__ __forceinline__ cuPixel interpolatePixel(cuPixel* surface, int64_t width, int64_t height, float x, float y)
+{
+	// clamp(floor(x), 0, width - 1)
+	//float x1 = floor(x), x2 = ceil(x), xRatio = ceil(x) - x;
+	//float y1 = floor(y), y2 = ceil(y), yRatio = ceil(y) - y;
+
+	float x1 = clamp(floor(x), 0, width - 1), x2 = clamp(ceil(x), 0, width - 1), xRatio = ceil(x) - x;
+	float y1 = clamp(floor(y), 0, height - 1), y2 = clamp(ceil(y), 0, height - 1), yRatio = ceil(y) - y;
+
+	auto cX1Y1 = surface[(int64_t)(y1 * width + x1)];
+	auto cX2Y1 = surface[(int64_t)(y1 * width + x2)];
+	auto cX1Y2 = surface[(int64_t)(y2 * width + x1)];
+	auto cX2Y2 = surface[(int64_t)(y2 * width + x2)];
+
+	auto cX1 = blendPixel(cX1Y1, cX2Y1, xRatio), cX2 = blendPixel(cX1Y2, cX2Y2, xRatio);
+	return blendPixel(cX1, cX2, yRatio);
 }
 
 __host__ __forceinline__ cuPixel randColor()

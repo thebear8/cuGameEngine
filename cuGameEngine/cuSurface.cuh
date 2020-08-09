@@ -179,7 +179,7 @@ public:
 		cudaMalloc(&buffer, sizeBytes);
 	}
 	
-	cuSurface(wchar_t* file, bool* success)
+	cuSurface(wchar_t const* file, bool* success)
 	{
 		auto bmp = Gdiplus::Bitmap::FromFile(file);
 		if (bmp && bmp->GetLastStatus() == Gdiplus::Ok)
@@ -272,7 +272,7 @@ public:
 		cuSurfaceFillColor << <blocks, threads >> > (buffer, width, height, color);
 	}
 
-	static bool loadFromFile(wchar_t* file, cuSurface** surface)
+	static bool loadFromFile(wchar_t const* file, cuSurface** surface)
 	{
 		bool success;
 		cuSurface* tmpSurface = new cuSurface(file, &success);

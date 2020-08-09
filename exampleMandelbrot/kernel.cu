@@ -29,10 +29,10 @@ __global__ void renderMandelbrot(cuPixel* buffer, int64_t width, int64_t height,
 			++iterations;
 		}
 
-		float i = iterations - (float)(log(log(x1 * x1 + y1 * y1))) / log2;
+		float i = (iterations - (float)(log(log(x1 * x1 + y1 * y1))) / log2) * (iterations != maxIterations);
 		buffer[yIdx * width + xIdx].r = mapf(log(i), 0, logMaxIterations, 0, 255);
 		buffer[yIdx * width + xIdx].g = mapf(log(i), 0, logMaxIterations, 0, 16);
-		buffer[yIdx * width + xIdx].b = mapf(log(i), 0, logMaxIterations, 0, 96);
+		buffer[yIdx * width + xIdx].b = mapf(log(i), 0, logMaxIterations, 0, 32);
 	}
 }
 
@@ -43,7 +43,9 @@ private:
 	double nLeft = -2, nRight = 2, nTop = -2, nBottom = 2;
 
 	bool isZooming = false;
-	float zoomDirection = 1;
+	float zoomDirection = 0;
+
+	std::chrono::steady_clock::time_point lastRenderTimeStamp;
 
 public:
 	mandelbrotRenderer() : wnd(1024, 768, true, L"Mandelbrot")
@@ -58,6 +60,8 @@ public:
 
 	void run()
 	{
+		lastRenderTimeStamp = std::chrono::high_resolution_clock::now();
+
 		bool isRunning = true;
 		wnd.runLoop(true, false, isRunning);
 	}
@@ -75,12 +79,12 @@ public:
 		if (e->c == 'W')
 		{
 			isZooming = true;
-			zoomDirection = 0.95f;
+			zoomDirection = -0.05;
 		}
 		else if (e->c == 'S')
 		{
 			isZooming = true;
-			zoomDirection = 1.05f;
+			zoomDirection =0.05;
 		}
 	}
 
@@ -118,16 +122,19 @@ public:
 
 	void apply(cuSurface* in, cuSurface* out)
 	{
+		auto timeStamp = std::chrono::high_resolution_clock::now();
 		if (isZooming)
 		{
-			zoom(zoomDirection);
+			auto zoomFactor = (timeStamp - lastRenderTimeStamp).count() / (50.0 * (1000.0 * 1000.0));
+			zoom(1 + zoomDirection * zoomFactor);
 		}
+		lastRenderTimeStamp = timeStamp;
 
 		int64_t width, height;
 		dim3 blocks, threads;
 		calcGrid(in, out, width, height, blocks, threads);
 
-		auto iterations = 20000;
+		auto iterations = 100000;
 		renderMandelbrot<<<blocks, threads>>>(out->buffer, width, height, nLeft, nRight, nTop * (height / (double)width), nBottom * (height / (double)width), iterations, log(iterations), log(2.0f));
 	}
 };
