@@ -69,7 +69,7 @@ public:
 			else if (c == L'\t')
 			{
 				auto space = glyphs[L' '];
-				auto indent = 4 - ((int64_t)(x / (space.xAdvance * scale)) % 4);
+				auto indent = 4 - ((int64_t)((x - xOffset) / (space.xAdvance * scale)) % 4);
 				x += indent * space.xAdvance * scale;
 			}
 			else

@@ -1,10 +1,12 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <iostream>
+#include <sstream>
 
 #include "../cuGameEngine/gdiPlusInit.cuh"
 #include "../cuGameEngine/renderWindow.cuh"
 #include "../cuGameEngine/cuSurface.cuh"
+#include "../cuGameEngine/sdfTextRenderer.cuh"
 
 __global__ void render(cuPixel* buffer, int width, int height, float xOffset, float yOffset, float maxXOffset, float maxYOffset, cuPixel c1, cuPixel c2)
 {
@@ -23,6 +25,7 @@ class screenSaver : public cuEffect
 {
 private:
 	renderWindow wnd;
+	sdfTextRenderer renderer{ L"lucidaconsole.fnt", L"lucidaconsole.png" };
 
 	bool colorSwitched = false;
 	cuPixel c1 = randColor();
@@ -41,7 +44,7 @@ public:
 	void run()
 	{
 		bool isRunning = true;
-		wnd.runLoop(false, true, isRunning);
+		wnd.runLoop(true, false, isRunning);
 	}
 
 	void onKey(keyboardEventArgs* e)
@@ -78,6 +81,10 @@ public:
 		}
 
 		render<<<blocks, threads>>>(out->buffer, width, height, xOffset, yOffset, maxXOffset, maxYOffset, renderC1, renderC2);
+
+		std::wstringstream str;
+		str << L"FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
+		renderer.renderString(out, str.str(), 4, 4, out->width, 0.5 , cuPixel(255, 255, 255, 255), true);
 	}
 };
 

@@ -1,6 +1,7 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <iostream>
+#include <sstream>
 
 #include "gdiPlusInit.cuh"
 #include "renderWindow.cuh"
@@ -18,7 +19,7 @@ private:
 	float angle;
 
 public:
-	renderTest() : wnd(1024, 768, false, L"Render Test")
+	renderTest() : wnd(1024, 768, true, L"Render Test")
 	{
 		wnd.pipeLine->addEffect(this);
 		wnd.inputMgr->key += createBoundHandler(&renderTest::onKey, this);
@@ -28,7 +29,7 @@ public:
 	void run()
 	{
 		bool isRunning = true;
-		wnd.runLoop(false, false, isRunning);
+		wnd.runLoop(true, false, isRunning);
 	}
 
 	void onKey(keyboardEventArgs* e)
@@ -48,7 +49,10 @@ public:
 	void apply(cuSurface* in, cuSurface* out)
 	{
 		out->fill(cuPixel(255, 0, 0, 64));
-		renderer.renderString(out, L"FPS:\t\t200\nFrametime:\t200\n()", 0, 0, out->width, 0.5, cuPixel(255, 255, 255, 255), true);
+
+		std::wstringstream str;
+		str << L"FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
+		renderer.renderString(out, str.str(), 0, 0, out->width, 0.5, cuPixel(255, 255, 255, 255), true);
 	}
 };
 

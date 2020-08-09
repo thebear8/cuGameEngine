@@ -36,6 +36,13 @@ public:
 	inputManager* inputMgr;
 	renderPipeline* pipeLine;
 
+	double lastMsgTime = 0;
+	double lastRenderTime = 0;
+	double lastPresentTime = 0;
+	double lastVSyncTime = 0;
+	double lastTotalTime = 0;
+	double lastFps = 0;
+
 	renderWindow(int width, int height, bool fullScreen, wchar_t const* name)
 	{
 		this->width = width;
@@ -103,14 +110,16 @@ public:
 
 			auto afterVSync = std::chrono::high_resolution_clock::now();
 
+			lastMsgTime = (afterMsg - before).count() / 1000.0;
+			lastRenderTime = (afterRender - afterMsg).count() / 1000.0;
+			lastPresentTime = (afterPresent - afterRender).count() / 1000.0;
+			lastVSyncTime = (afterVSync - afterPresent).count() / 1000.0;
+			lastTotalTime = (afterVSync - before).count() / 1000.0;
+			lastFps = 1000000.0 / lastTotalTime;
+
 			if (logFrameTimes)
 			{
-				auto msgTime = (afterMsg - before).count() / 1000.0;
-				auto renderTime = (afterRender - afterMsg).count() / 1000.0;
-				auto presentTime = (afterPresent - afterRender).count() / 1000.0;
-				auto vSyncTime = (afterVSync - afterPresent).count() / 1000.0;
-				auto totalTime = (afterVSync - before).count() / 1000.0;
-				std::cout << "Render Time: " << renderTime << "us, Present Time: " << presentTime << "us, Message Loop Time: " << msgTime << "us, VSync Time: " << vSyncTime << "us. FPS: " << 1000000.0 / totalTime <<"\n";
+				std::cout << "Render Time: " << lastRenderTime << "us, Present Time: " << lastPresentTime << "us, Message Loop Time: " << lastMsgTime << "us, VSync Time: " << lastVSyncTime << "us. FPS: " << lastFps <<"\n";
 			}
 		}
 	}
