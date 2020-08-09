@@ -6,6 +6,8 @@ It's not at all complete, but has a few nice features. It's somewhat similar to 
 Right now, there's only very basic 2d functionality like surfaces, blitting, alpha-blending, loading images into surfaces and so on.
 It does have a very basic render pipeline and support for shaders, which are written in cuda aswell.
 
+It also has a decent sdf(signed distance field) text rendering system with support for custom fonts. It supports tabs(L'\t') and newlines(L'\n') and text wrapping, but only on character level, not word level.
+
 One of the goals of this project was to have a lot of control over rendering, so the render pipeline is designed to be extremly basic and customizable.
 Another goal of this project was to keep the code as simple, compact and easy to understand as possible.
 
