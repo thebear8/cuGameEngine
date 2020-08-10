@@ -83,8 +83,8 @@ public:
 		render<<<blocks, threads>>>(out->buffer, width, height, xOffset, yOffset, maxXOffset, maxYOffset, renderC1, renderC2);
 
 		std::wstringstream str;
-		str << L"FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
-		renderer.renderString(out, str.str(), 4, 4, out->width, 0.5 , cuPixel(255, 255, 255, 255), true);
+		str << "FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
+		renderer.renderString(out, str.str(), 4, 4, out->width, 3, cuPixel(255, 255, 255, 255), true);
 	}
 };
 

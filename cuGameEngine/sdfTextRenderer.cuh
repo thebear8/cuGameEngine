@@ -32,7 +32,7 @@ private:
 public:
 	sdfTextRenderer(wchar_t const* fntFile, wchar_t const* atlasFile) : parser(fntFile)
 	{
-		cuSurface::loadFromFile(atlasFile, &atlas);
+		volatile auto s = cuSurface::loadFromFile(atlasFile, &atlas);
 		for (auto& glyph : parser.glyphs)
 		{
 			glyphs.try_emplace(glyph.id, glyph);
