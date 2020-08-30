@@ -5,6 +5,11 @@
 #include "fntParser.cuh"
 #include "cuSurface.cuh"
 
+__global__ void sdfTextRendererRenderTextBuffer(cuPixel* surface, int64_t surfaceWidth, int64_t surfaceHeight, )
+{
+
+}
+
 __global__ void sdfTextRendererRenderGlyph(cuPixel* surface, int64_t surfaceWidth, int64_t surfaceHeight,  float xPos, float yPos, float width, float height, fontGlyph glyph, cuPixel* atlas, int64_t atlasWidth, int64_t atlasHeight, cuPixel textColor, float smoothing)
 {
 	auto xIdx = blockDim.x * blockIdx.x + threadIdx.x;

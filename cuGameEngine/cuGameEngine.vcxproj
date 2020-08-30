@@ -109,6 +109,7 @@
     <ClInclude Include="mathUtils.cuh" />
     <ClInclude Include="renderPipeline.cuh" />
     <ClInclude Include="renderWindow.cuh" />
+    <ClInclude Include="sdfTextBuffer.cuh" />
     <ClInclude Include="sdfTextRenderer.cuh" />
     <ClInclude Include="swapChain.cuh" />
   </ItemGroup>

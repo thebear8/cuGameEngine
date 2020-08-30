@@ -86,12 +86,8 @@ __device__ __host__ __forceinline__ cuPixel blendPixel(cuPixel c1, cuPixel c2, f
 
 __device__ __host__ __forceinline__ cuPixel interpolatePixel(cuPixel* surface, int64_t width, int64_t height, float x, float y)
 {
-	// clamp(floor(x), 0, width - 1)
-	//float x1 = floor(x), x2 = ceil(x), xRatio = ceil(x) - x;
-	//float y1 = floor(y), y2 = ceil(y), yRatio = ceil(y) - y;
-
-	float x1 = clamp(floor(x), 0, width - 1), x2 = clamp(ceil(x), 0, width - 1), xRatio = ceil(x) - x;
-	float y1 = clamp(floor(y), 0, height - 1), y2 = clamp(ceil(y), 0, height - 1), yRatio = ceil(y) - y;
+	float x1 = clampf(floorf(x), 0, width - 1), x2 = clampf(ceilf(x), 0, width - 1), xRatio = ceilf(x) - x;
+	float y1 = clampf(floorf(y), 0, height - 1), y2 = clampf(ceilf(y), 0, height - 1), yRatio = ceilf(y) - y;
 
 	auto cX1Y1 = surface[(int64_t)(y1 * width + x1)];
 	auto cX2Y1 = surface[(int64_t)(y1 * width + x2)];

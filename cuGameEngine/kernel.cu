@@ -19,7 +19,7 @@ private:
 	float angle;
 
 public:
-	renderTest() : wnd(1024, 768, true, L"Render Test")
+	renderTest() : wnd(1024, 768, false, L"Render Test")
 	{
 		wnd.pipeLine->addEffect(this);
 		wnd.inputMgr->key += createBoundHandler(&renderTest::onKey, this);
@@ -29,6 +29,12 @@ public:
 	void run()
 	{
 		bool isRunning = true;
+		wnd.runLoop(true, false, isRunning);
+	}
+
+	void runOnce()
+	{
+		bool isRunning = false;
 		wnd.runLoop(true, false, isRunning);
 	}
 
@@ -51,8 +57,13 @@ public:
 		out->fill(cuPixel(255, 0, 0, 64));
 
 		std::wstringstream str;
-		str << L"FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
-		renderer.renderString(out, str.str(), 0, 0, out->width, 0.5, cuPixel(255, 255, 255, 255), true);
+		for (int i = 0; i < 50; i++)
+		{
+			str << L"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz123456789!\"§$%&/()=?`*'#+~-.:,;|<>";
+		}
+
+		//str << L"FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
+		renderer.renderString(out, str.str(), 0, 0, out->width, 2.5, cuPixel(255, 255, 255, 255), true);
 	}
 };
 
@@ -60,4 +71,6 @@ int main()
 {
 	auto render = new renderTest();
 	render->run();
+	//render->runOnce();
+	return 0;
 }
