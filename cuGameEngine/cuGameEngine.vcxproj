@@ -86,6 +86,7 @@
       <CodeGeneration>compute_75,sm_75;%(CodeGeneration)</CodeGeneration>
       <InterleaveSourceInPTX>true</InterleaveSourceInPTX>
       <Keep>false</Keep>
+      <AdditionalOptions>--default-stream per-thread %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
     <CudaLink>
       <Optimization>O2</Optimization>
@@ -97,6 +98,7 @@
   <ItemGroup>
     <ClInclude Include="cuEffect.cuh" />
     <ClInclude Include="cuPixel.cuh" />
+    <ClInclude Include="cuStreamManager.cuh" />
     <ClInclude Include="cuSurface.cuh" />
     <ClInclude Include="cuVec.cuh" />
     <ClInclude Include="event.cuh" />

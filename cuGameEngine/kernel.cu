@@ -13,6 +13,7 @@ class renderTest : public cuEffect
 private:
 	renderWindow wnd;
 	sdfTextRenderer renderer{ L"lucidaconsole.fnt", L"lucidaconsole.png" };
+	sdfTextBuffer buffer;
 
 	int posX;
 	int posY;
@@ -29,7 +30,7 @@ public:
 	void run()
 	{
 		bool isRunning = true;
-		wnd.runLoop(true, false, isRunning);
+		wnd.runLoop(false, true, isRunning);
 	}
 
 	void runOnce()
@@ -62,8 +63,17 @@ public:
 			str << L"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz123456789!\"§$%&/()=?`*'#+~-.:,;|<>";
 		}
 
+		buffer.clear();
+		renderer.addStringToBuffer(&buffer, str.str(), 0, 0, out->width, 2.5, cuPixel(255, 255, 255, 255), true);
+
+		buffer.clipForSurface(out);
+		buffer.uploadClippedGlyphs();
+		renderer.renderTextBuffer(out, &buffer, true);
+
+		//auto r = cudaDeviceSynchronize();
+
 		//str << L"FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
-		renderer.renderString(out, str.str(), 0, 0, out->width, 2.5, cuPixel(255, 255, 255, 255), true);
+		//renderer.renderString(out, str.str(), 0, 0, out->width, 2.5, cuPixel(255, 255, 255, 255), true, true);
 	}
 };
 

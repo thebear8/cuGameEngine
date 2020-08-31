@@ -1,3 +1,4 @@
+#pragma once
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
@@ -8,7 +9,7 @@ struct fontGlyph
 	int xOffset, yOffset;
 	int xAdvance;
 
-	fontGlyph()
+	__device__ __host__ __forceinline__ fontGlyph()
 	{
 		this->id = 0;
 		this->x = 0;
@@ -20,7 +21,7 @@ struct fontGlyph
 		this->xAdvance = 0;
 	}
 
-	fontGlyph(const fontGlyph& glyph)
+	__device__ __host__ __forceinline__ fontGlyph(const fontGlyph& glyph)
 	{
 		this->id = glyph.id;
 		this->x = glyph.x;
@@ -32,7 +33,7 @@ struct fontGlyph
 		this->xAdvance = glyph.xAdvance;
 	}
 
-	fontGlyph(int id, int x, int y, int width, int height, int xOffset, int yOffset, int xAdvance)
+	__device__ __host__ __forceinline__ fontGlyph(int id, int x, int y, int width, int height, int xOffset, int yOffset, int xAdvance)
 	{
 		this->id = id;
 		this->x = x;

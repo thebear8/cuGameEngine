@@ -12,7 +12,7 @@ __device__ __host__ __forceinline__ float mapf(float x, float in_min, float in_m
 
 __device__ __host__ __forceinline__ float clampf(float x, float min, float max)
 {
-	return x < min ? min : (x > max ? max : x);
+	return ((x < min) * min) + ((x > max) * max) + ((x > min && x < max) * x);
 }
 
 __device__ __host__ __forceinline__ float smoothStepf(float x, float in_min, float in_max)
@@ -49,7 +49,7 @@ __device__ __host__ __forceinline__ double map(double x, double in_min, double i
 
 __device__ __host__ __forceinline__ double clamp(double x, double min, double max)
 {
-	return x < min ? min : (x > max ? max : x);
+	return ((x < min) * min) + ((x > max) * max) + ((x > min && x < max) * x);
 }
 
 __device__ __host__ __forceinline__ float smoothStep(double x, double in_min, double in_max)
