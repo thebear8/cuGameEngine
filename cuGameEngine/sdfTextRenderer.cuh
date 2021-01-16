@@ -48,11 +48,14 @@ __device__ __forceinline__ void sdfTextRendererRenderGlyphInternal(cuPixel* surf
 		float normGlyphAlpha = (glyphAlpha - (0.5 - glyph->smoothing)) / (2 * glyph->smoothing);
 		float alpha = (normGlyphAlpha > 1.0f) + ((normGlyphAlpha > 0.0f && normGlyphAlpha < 1.0f) * normGlyphAlpha);
 
-		auto& surfacePx = surface[(int)(y * surfaceWidth + x)];
-		surfacePx.a = (glyph->color.a * alpha) + (surfacePx.a * (1 - alpha));
-		surfacePx.r = (glyph->color.r * alpha) + (surfacePx.r * (1 - alpha));
-		surfacePx.g = (glyph->color.g * alpha) + (surfacePx.g * (1 - alpha));
-		surfacePx.b = (glyph->color.b * alpha) + (surfacePx.b * (1 - alpha));
+		if (alpha * 256 > 1.0f)
+		{
+			auto& surfacePx = surface[(int)(y * surfaceWidth + x)];
+			surfacePx.a = (glyph->color.a * alpha) + (surfacePx.a * (1 - alpha));
+			surfacePx.r = (glyph->color.r * alpha) + (surfacePx.r * (1 - alpha));
+			surfacePx.g = (glyph->color.g * alpha) + (surfacePx.g * (1 - alpha));
+			surfacePx.b = (glyph->color.b * alpha) + (surfacePx.b * (1 - alpha));
+		}
 	}
 }
 
@@ -128,13 +131,13 @@ public:
 			auto stride = buffer->getCount() / cuStreamManager::getNumberOfStreams();
 			for (int i = 0; i < buffer->getCount(); i += stride)
 			{
-				sdfTextRendererRenderTextBuffer << <blocks, threads, 0, cuStreamManager::getStream(streamIdx) >> > (surface->buffer, surface->width, surface->height, buffer->getDevicePtr(), i, clamp(i + stride, 0, buffer->getCount() - 1), atlas->buffer, atlas->width, atlas->height);
+				sdfTextRendererRenderTextBuffer << <blocks, threads, 0, cuStreamManager::getStream(streamIdx) >> > (surface->buffer, surface->width, surface->height, 0, 0, buffer->getDevicePtr(), i, clamp(i + stride, 0, buffer->getCount() - 1), atlas->buffer, atlas->width, atlas->height);
 				streamIdx = (streamIdx + 1) % cuStreamManager::getNumberOfStreams();
 			}
 		}
 		else
 		{
-			sdfTextRendererRenderTextBuffer<<<blocks, threads>>>(surface->buffer, surface->width, surface->height, buffer->getDevicePtr(), 0, buffer->getCount() - 1, atlas->buffer, atlas->width, atlas->height);
+			sdfTextRendererRenderTextBuffer<<<blocks, threads>>>(surface->buffer, surface->width, surface->height, 0, 0, buffer->getDevicePtr(), 0, buffer->getCount() - 1, atlas->buffer, atlas->width, atlas->height);
 		}
 	}
 

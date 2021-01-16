@@ -36,7 +36,7 @@ public:
 	void runOnce()
 	{
 		bool isRunning = false;
-		wnd.runLoop(true, false, isRunning);
+		wnd.runLoop(false, false, isRunning);
 	}
 
 	void onKey(keyboardEventArgs* e)
@@ -58,22 +58,23 @@ public:
 		out->fill(cuPixel(255, 0, 0, 64));
 
 		std::wstringstream str;
-		for (int i = 0; i < 50; i++)
+		for (int i = 0; i < 200; i++)
 		{
 			str << L"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz123456789!\"§$%&/()=?`*'#+~-.:,;|<>";
 		}
 
-		buffer.clear();
-		renderer.addStringToBuffer(&buffer, str.str(), 0, 0, out->width, 2.5, cuPixel(255, 255, 255, 255), true);
+		//buffer.clear();
+		//renderer.addStringToBuffer(&buffer, str.str(), 0, 0, out->width, 2.5, cuPixel(255, 255, 255, 255), true);
 
-		buffer.clipForSurface(out);
-		buffer.uploadClippedGlyphs();
-		renderer.renderTextBuffer(out, &buffer, true);
+		//buffer.clipForSurface(out);
+		//buffer.uploadClippedGlyphs();
+		//renderer.renderTextBuffer(out, &buffer, true);
 
-		//auto r = cudaDeviceSynchronize();
+		//volatile auto r = cudaDeviceSynchronize();
 
 		//str << L"FPS:\t\t" << wnd.lastFps << "\nFrametime:\t" << wnd.lastTotalTime << "us";
-		//renderer.renderString(out, str.str(), 0, 0, out->width, 2.5, cuPixel(255, 255, 255, 255), true, true);
+		renderer.renderString(out, str.str(), 0, 0, out->width, 0.25, cuPixel(255, 255, 255, 255), true, false);
+		cudaDeviceSynchronize();
 	}
 };
 

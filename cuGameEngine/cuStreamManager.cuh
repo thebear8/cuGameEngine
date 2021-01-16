@@ -26,7 +26,7 @@ class cuStreamManager
 				for (int i = 0; i < props.multiProcessorCount; i++)
 				{
 					cudaStream_t stream;
-					cudaStreamCreate(&stream);
+					cudaStreamCreateWithFlags(&stream, cudaStreamNonBlocking);
 					streams.push_back(stream);
 				}
 			}
@@ -43,6 +43,14 @@ class cuStreamManager
 			init();
 			return streams[idx];
 		}
+
+		void syncAll()
+		{
+			for(auto s : streams)
+			{
+				cudaStreamSynchronize(s);
+			}
+		}
 	};
 
 private:
@@ -55,4 +63,5 @@ private:
 public:
 	static size_t getNumberOfStreams() { return getMgr().getNumberOfStreams(); }
 	static cudaStream_t getStream(size_t idx) { return getMgr().getStream(idx); }
+	static void syncAll() { return getMgr().syncAll(); }
 };
