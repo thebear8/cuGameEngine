@@ -180,8 +180,8 @@ private:
 			y = CW_USEDEFAULT;
 		}
 
-		AdjustWindowRect(&windowRect, windowStyle, false);
-		hwnd = CreateWindowExW(WS_EX_WINDOWEDGE, wndClassName, windowName, windowStyle, x, y, width, height, 0, 0, hInst, 0);
+		AdjustWindowRect(&windowRect, windowStyle, !fullScreen);
+		hwnd = CreateWindowExW(WS_EX_WINDOWEDGE, wndClassName, windowName, windowStyle, x, y, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, 0, 0, hInst, 0);
 		SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	}
 

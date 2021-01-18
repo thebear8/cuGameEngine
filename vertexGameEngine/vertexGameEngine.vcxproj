@@ -81,8 +81,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.cuh" />
+    <ClInclude Include="cudaFnPointer.cuh" />
+    <ClInclude Include="cudaNew.cuh" />
+    <ClInclude Include="kernelHelpers.cuh" />
     <ClInclude Include="math.cuh" />
+    <ClInclude Include="shader.cuh" />
     <ClInclude Include="triangleBuffer.cuh" />
+    <ClInclude Include="triangleRenderer.cuh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

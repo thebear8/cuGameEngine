@@ -164,6 +164,18 @@ __global__ void cuSurfaceFillColor(cuPixel* buffer, int64_t width, int64_t heigh
 	}
 }
 
+class cuGpuSurface
+{
+public:
+	cuPixel* buffer;
+	int width, height;
+
+	__device__ __inline__ bool isInBounds(int x, int y)
+	{
+		return x >= 0 && x < width && y >= 0 && y < height;
+	}
+};
+
 class cuSurface
 {
 public:
@@ -178,7 +190,7 @@ public:
 		this->sizeBytes = width * height * sizeof(cuPixel);
 		cudaMalloc(&buffer, sizeBytes);
 	}
-	
+
 	cuSurface(wchar_t const* file, bool* success)
 	{
 		auto bmp = Gdiplus::Bitmap::FromFile(file);
@@ -209,6 +221,11 @@ public:
 	~cuSurface()
 	{
 		cudaFree(buffer);
+	}
+
+	cuGpuSurface getGpuSurfaceInfo()
+	{
+		return { buffer, (int)width, (int)height };
 	}
 
 	bool copyToBuffer(void* copyTo)

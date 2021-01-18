@@ -10,7 +10,9 @@
 struct vertexTriangle
 {
 	cuPixel color;
-	vec3 points[3];
+	vec3 a, b, c;
+
+	__device__ __host__ __inline__ vertexTriangle(cuPixel color, vec3 a, vec3 b, vec3 c) : color(color), a(a), b(b), c(c) { }
 };
 
 class triangleBuffer
@@ -31,6 +33,13 @@ public:
 	~triangleBuffer()
 	{
 		cudaFree(gpuTriangles);
+	}
+
+	inline void cloneFrom(const triangleBuffer& buffer)
+	{
+		cpuTriangles.clear();
+		cpuTriangles.reserve(buffer.cpuTriangles.size());
+		cpuTriangles.insert(cpuTriangles.begin(), buffer.cpuTriangles.data(), buffer.cpuTriangles.data() + buffer.cpuTriangles.size());
 	}
 
 	inline void push(const vertexTriangle& tri)
@@ -54,6 +63,17 @@ public:
 
 		gpuTriangleCount = cpuTriangles.size();
 		cudaMemcpy(gpuTriangles, cpuTriangles.data(), gpuTriangleCount * sizeof(vertexTriangle), cudaMemcpyDefault);
+	}
+
+	inline void download()
+	{
+		if (gpuTriangleCount != cpuTriangles.size())
+		{
+			cpuTriangles.clear();
+			cpuTriangles.resize(gpuTriangleCount, vertexTriangle({ 0, 0, 0, 0 }, {0, 0, 0}, { 0, 0, 0 }, { 0, 0, 0 }));
+		}
+
+		cudaMemcpy(cpuTriangles.data(), gpuTriangles, gpuTriangleCount * sizeof(vertexTriangle), cudaMemcpyDefault);
 	}
 
 	inline size_t getGpuTriangleCount()
