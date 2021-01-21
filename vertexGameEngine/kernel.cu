@@ -145,19 +145,6 @@ public:
 
 int main()
 {
-	for (int i = 0; i < 10000; i++)
-	{
-		auto tex = i / 10000.0f;
-		int x = roundf(tex * 10000);
-
-		if (x != i)
-		{
-			DebugBreak();
-		}
-	}
-
-	auto shader = cudaNewManaged<vertexShader>();
-
 	auto r = new testRenderer();
 	r->run();
 }

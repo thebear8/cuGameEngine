@@ -34,34 +34,15 @@ static __device__ __host__ __inline__ float edgeFunction(const vec3& p, const ve
 	return (p.x - i.x) * dY - (p.y - i.y) * dX;
 }
 
-/*static __device__ inline cuPixel shadeTriangle(float x, float y)
+static __device__ __host__ __inline__ vec3 projectToCameraSpace()
 {
-	return cuPixel(255, x * 255, 0, y * 255);
+
 }
 
-__global__ void drawUsingEdgeFunction(cuGpuSurface tex, vertexTriangle tri)
+static __device__ __host__ __inline__ vec3 projectToScreenSpace(const vec3& pos, float nearPlane)
 {
-	auto x = cuXIdx();
-	auto y = cuYIdx();
-
-	if (tex.isInBounds(x, y))
-	{
-		vec3 ab = tri.b - tri.a;
-		vec3 bc = tri.c - tri.b;
-		vec3 ac = tri.c - tri.a;
-
-		vec3 p(x, y, 0);
-		float eAB = edgeFunction(p, tri.a, tri.b);
-		float eBC = edgeFunction(p, tri.b, tri.c);
-		float eCA = edgeFunction(p, tri.c, tri.a);
-
-		if (eAB >= 0 && eBC >= 0 && eCA >= 0)
-		{
-
-			tex2d(&tex, x, y) = shadeTriangle(x / (float)tex.width, y / (float)tex.height);
-		}
-	}
-}*/
+	return { (nearPlane * pos.x) / (-pos.z), (nearPlane * pos.y) / (-pos.z), -pos.z };
+}
 
 __global__ void runVertexShader(const vertexShader* shader, const triangleRenderInfo* input, int inputCount, triangleRenderInfo* output, int outputSize)
 {
@@ -155,3 +136,32 @@ public:
 		auto e = cudaDeviceSynchronize();
 	}
 };
+
+/*static __device__ inline cuPixel shadeTriangle(float x, float y)
+{
+	return cuPixel(255, x * 255, 0, y * 255);
+}
+
+__global__ void drawUsingEdgeFunction(cuGpuSurface tex, vertexTriangle tri)
+{
+	auto x = cuXIdx();
+	auto y = cuYIdx();
+
+	if (tex.isInBounds(x, y))
+	{
+		vec3 ab = tri.b - tri.a;
+		vec3 bc = tri.c - tri.b;
+		vec3 ac = tri.c - tri.a;
+
+		vec3 p(x, y, 0);
+		float eAB = edgeFunction(p, tri.a, tri.b);
+		float eBC = edgeFunction(p, tri.b, tri.c);
+		float eCA = edgeFunction(p, tri.c, tri.a);
+
+		if (eAB >= 0 && eBC >= 0 && eCA >= 0)
+		{
+
+			tex2d(&tex, x, y) = shadeTriangle(x / (float)tex.width, y / (float)tex.height);
+		}
+	}
+}*/

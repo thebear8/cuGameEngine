@@ -12,14 +12,16 @@
 
 __global__ void renderMandelbrot(cuPixel* buffer, int64_t width, int64_t height, double nLeft, double nRight, double nTop, double nBottom, float maxIterations, float logMaxIterations, float log2)
 {
+	using dataType = float;
+
 	int xIdx = blockDim.x * blockIdx.x + threadIdx.x;
 	int yIdx = blockDim.y * blockIdx.y + threadIdx.y;
 
 	if (xIdx < width && yIdx < height)
 	{
 		float iterations = 0;
-		double x = map(xIdx, 0, width, nLeft, nRight), x1 = 0, x2 = 0;
-		double y = map(yIdx, 0, height, nTop, nBottom), y1 = 0, y2 = 0;
+		dataType x = mapf(xIdx, 0, width, nLeft, nRight), x1 = 0, x2 = 0;
+		dataType y = mapf(yIdx, 0, height, nTop, nBottom), y1 = 0, y2 = 0;
 
 		while (iterations < maxIterations && x2 + y2 < 4.0f)
 		{
@@ -139,7 +141,7 @@ public:
 		dim3 blocks, threads;
 		calcGrid(in, out, width, height, blocks, threads);
 
-		auto iterations = 500;
+		auto iterations = 10000;
 		renderMandelbrot<<<blocks, threads>>>(out->buffer, width, height, nLeft, nRight, nTop * (height / (double)width), nBottom * (height / (double)width), iterations, log(iterations), log(2.0f));
 
 		std::wstringstream str;
